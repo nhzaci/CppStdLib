@@ -20,7 +20,9 @@ chmod u+x ./build.sh
 
 - atoi
 - stoi
-- unique_pointer
-- shared_pointer
-- weak_pointer
-- unordered_map
+- iota
+- unique_ptr (arrays)
+- shared_ptr
+- weak_ptr
+- unordered_map using hashing
+- red black tree
