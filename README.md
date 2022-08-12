@@ -18,11 +18,16 @@ chmod u+x ./build.sh
 
 # TODO
 
-- atoi
+- decodeBase32
 - stoi
-- iota
 - unique_ptr (arrays)
 - shared_ptr
 - weak_ptr
 - unordered_map using hashing
 - red black tree
+
+# Completed
+- atoi
+- iota
+- vector
+- encode
