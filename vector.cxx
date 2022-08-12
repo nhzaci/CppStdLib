@@ -7,13 +7,13 @@ template <class T> class vector {
 private:
   T *arr;
   size_t capacity;
-  size_t currSize;
+  size_t currEmptyIndex;
 
   void expand_array() {
     std::cout << "Expanding array\n";
     T *newArray = new T[2 * capacity];
 
-    for (size_t i = 0; i < currSize; i++)
+    for (size_t i = 0; i < currEmptyIndex; i++)
       newArray[i] = arr[i];
 
     delete[] arr;
@@ -22,44 +22,60 @@ private:
   }
 
 public:
-  vector(size_t size) : capacity{size}, arr{new T[size]}, currSize{0} {};
+  vector() : capacity{0}, currEmptyIndex{0}, arr{nullptr} {};
+
+  vector(size_t size) : capacity{size}, arr{new T[size]}, currEmptyIndex{0} {};
 
   vector(std::initializer_list<T> list)
-      : capacity{list.size()}, arr{new T[list.size()]}, currSize{0} {
+      : capacity{list.size()}, arr{new T[list.size()]}, currEmptyIndex{0} {
     for (auto item : list)
-      arr[currSize++] = item;
+      arr[currEmptyIndex++] = item;
   }
 
   void push_back(const T &t) {
-    std::cout << "capacity: " << capacity << "; currSize: " << currSize
+    std::cout << "capacity: " << capacity << "; currSize: " << currEmptyIndex
               << std::endl;
-    if (capacity > currSize) {
-      arr[currSize++] = t;
+    if (arr == nullptr) {
+      arr = new T{t};
+      capacity++;
+      currEmptyIndex++;
+      return;
+    }
+
+    if (capacity > currEmptyIndex) {
+      arr[currEmptyIndex++] = t;
       return;
     }
 
     expand_array();
-    arr[currSize++] = t;
+    arr[currEmptyIndex++] = t;
   }
 
   void push_back(T &&t) {
-    if (capacity > currSize) {
-      arr[currSize] = std::move(t);
-      currSize++;
+    if (arr == nullptr) {
+      arr = new T{std::move(t)};
+      capacity++;
+      currEmptyIndex++;
+      return;
+    }
+
+    if (capacity > currEmptyIndex) {
+      arr[currEmptyIndex] = std::move(t);
+      currEmptyIndex++;
       return;
     }
 
     expand_array();
-    arr[currSize++] = std::move(t);
+    arr[currEmptyIndex++] = std::move(t);
   }
 
   void print() {
     std::cout << "[";
 
-    for (size_t index = 0; index < currSize; index++) {
+    for (size_t index = 0; index < currEmptyIndex; index++) {
       std::cout << arr[index];
 
-      if (index + 1 < currSize)
+      if (index + 1 < currEmptyIndex)
         std::cout << ",";
     }
 
@@ -70,9 +86,12 @@ public:
 
   const T &operator[](int i) const { return arr[i]; }
 
-  int size() { return currSize; }
+  int size() { return currEmptyIndex; }
 
-  ~vector() noexcept { delete[] arr; }
+  ~vector() noexcept {
+    if (arr)
+      delete[] arr;
+  }
 };
 }; // namespace my_std
 
@@ -96,4 +115,12 @@ int main() {
   v2.push_back(20);
 
   v2.print();
+
+  my_std::vector<int> emptyV;
+
+  emptyV.print();
+
+  emptyV.push_back(2);
+
+  emptyV.print();
 }
